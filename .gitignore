@@ -36,6 +36,7 @@ junit.xml
 coverage.xml
 .pytest_cache/
 .mypy_cache/
+.mutmut-cache
 
 # Build and docs folder/files
 build/*

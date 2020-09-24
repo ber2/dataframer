@@ -4,17 +4,9 @@ from typing import Tuple, Dict
 import pytest
 
 import pandas as pd
-import pandas.util.testing as tm
 
 from dataframer import DataFrameMaker
 from dataframer.exceptions import UnsupportedDataType
-
-
-def test_pandas_version():
-    """This test is designed to keep an eye on compatibility with the current pandas
-    version; its failure means we should update the test, provided nothing else fails.
-    """
-    assert pd.__version__ == "0.25.3"
 
 
 def check_df(df: pd.DataFrame, shape: Tuple[int, int], cols: Dict[str, str]):
@@ -34,16 +26,16 @@ class TestDataFrameMaker(object):
 
         dm = DataFrameMaker()
         with pytest.raises(UnsupportedDataType):
-            dm.make_df(nrows=100, cols={"id": "foo"})
+            dm.make_df(nrows=100, cols={"id": "foo"}, str_len=14, enum_len=4)
 
         n = 100
         t_cols = {"id": "int"}
-        df = dm.make_df(nrows=n, cols=t_cols)
+        df = dm.make_df(nrows=n, cols=t_cols, str_len=14, enum_len=4)
         check_df(df, (100, 1), t_cols)
 
         df_res = pd.read_pickle("tests/df1.pkl")
 
-        tm.assert_frame_equal(df, df_res)
+        pd.testing.assert_frame_equal(df, df_res)
 
         n = 1000
         t_cols = {
@@ -61,4 +53,4 @@ class TestDataFrameMaker(object):
 
         df_res = pd.read_pickle("tests/df2.pkl")
 
-        tm.assert_frame_equal(df, df_res)
+        pd.testing.assert_frame_equal(df, df_res)

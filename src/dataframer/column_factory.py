@@ -1,17 +1,17 @@
 """This module contains a factory of data columns to be used to build
 dataframes.
 """
-# pylint: disable=too-few-public-methods,useless-super-delegation
-from abc import ABC, abstractmethod
+from abc import ABC
 import string
 
 import numpy as np
 
 from .exceptions import UnsupportedDataType
 
+
 CHARS = [l for l in string.ascii_letters + string.digits]
 
-# pylint: disable=too-many-return-statements
+
 def column_grabber(dtype: str):
     """Returns a column maker for the specified data type. Accepted data types
     are the following:
@@ -45,7 +45,7 @@ def column_grabber(dtype: str):
     raise UnsupportedDataType(f"Data type '{dtype}' currently not supported.")
 
 
-class ColumnMakerBaseClass(ABC):
+class ColumnMaker(ABC):
     """Abstract base class for column makers.
     """
 
@@ -58,7 +58,6 @@ class ColumnMakerBaseClass(ABC):
         self.nrows = nrows
         self.seed = seed
 
-    @abstractmethod
     def make_col(self) -> np.array:
         """This method implements the generation of column data and returns it
         as a numpy array.
@@ -66,7 +65,7 @@ class ColumnMakerBaseClass(ABC):
         pass
 
 
-class IntColumnMaker(ColumnMakerBaseClass):
+class IntColumnMaker(ColumnMaker):
     """Make a column of integers.
     """
 
@@ -85,7 +84,7 @@ class IntColumnMaker(ColumnMakerBaseClass):
         return np.random.randint(0, 10 ** 5, self.nrows, dtype=np.int64)
 
 
-class FloatColumnMaker(ColumnMakerBaseClass):
+class FloatColumnMaker(ColumnMaker):
     """Make a column of floats.
     """
 
@@ -104,7 +103,7 @@ class FloatColumnMaker(ColumnMakerBaseClass):
         return np.random.randn(self.nrows)
 
 
-class TimestampColumnMaker(ColumnMakerBaseClass):
+class TimestampColumnMaker(ColumnMaker):
     """Make a column of timestamps.
     """
 
@@ -126,7 +125,7 @@ class TimestampColumnMaker(ColumnMakerBaseClass):
         return np.array([start_seed + j for j in jumps])
 
 
-class DateColumnMaker(ColumnMakerBaseClass):
+class DateColumnMaker(ColumnMaker):
     """Make a column of dates.
     """
 
@@ -148,11 +147,11 @@ class DateColumnMaker(ColumnMakerBaseClass):
         return np.array([start_seed + j for j in jumps])
 
 
-class StringColumnMaker(ColumnMakerBaseClass):
+class StringColumnMaker(ColumnMaker):
     """Make a column of strings of fixed length.
     """
 
-    def __init__(self, nrows: int, seed: int, str_len: int = 12):
+    def __init__(self, nrows: int, seed: int, str_len: int):
         """Save column metadata.
 
         :param nrows: number of rows.
@@ -171,7 +170,7 @@ class StringColumnMaker(ColumnMakerBaseClass):
         )
 
 
-class ConstantStringColumnMaker(ColumnMakerBaseClass):
+class ConstantStringColumnMaker(ColumnMaker):
     """Make a column with a repeated constant string.
     """
 
@@ -192,7 +191,7 @@ class ConstantStringColumnMaker(ColumnMakerBaseClass):
         return np.array(self.nrows * ["".join(np.random.choice(CHARS, self.str_len))])
 
 
-class ConstantIntColumnMaker(ColumnMakerBaseClass):
+class ConstantIntColumnMaker(ColumnMaker):
     """Make a column with a constant integer value.
     """
 
@@ -211,7 +210,7 @@ class ConstantIntColumnMaker(ColumnMakerBaseClass):
         return np.repeat(np.random.randint(0, 10 ** 5, dtype=np.int64), self.nrows)
 
 
-class EnumColumnMaker(ColumnMakerBaseClass):
+class EnumColumnMaker(ColumnMaker):
     """Make a column with categorical enum values.
     """
 

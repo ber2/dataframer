@@ -16,10 +16,10 @@ class DataFrameMaker:
 
     def make_df(
         self,
-        nrows: int = 100,
-        cols: Dict[str, str] = {"id": "int"},
-        str_len: int = 14,
-        enum_len: int = 4,
+        nrows: int,
+        cols: Dict[str, str],
+        str_len: int,
+        enum_len: int,
     ) -> pd.DataFrame:
         """Build a DataFrame of the specified dimensions.
 
